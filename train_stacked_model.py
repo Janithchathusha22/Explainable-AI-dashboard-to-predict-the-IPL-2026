@@ -15,8 +15,10 @@ import joblib
 # Standardize output encoding
 sys.stdout.reconfigure(encoding='utf-8')
 
-PREDICTION_TARGET_DATE = pd.Timestamp("2026-05-26")
+PREDICTION_TARGET_DATE = pd.Timestamp("2026-05-27")
 FINAL_MATCH_DATE = pd.Timestamp("2026-05-31")
+TEAM_A = "RCB"
+TEAM_B = "SRH"
 CV_FOLDS = 10
 
 def prepare_data(features_file):
@@ -24,7 +26,7 @@ def prepare_data(features_file):
     df['date'] = pd.to_datetime(df['date'])
     
     # The final match is the test set; training is cut off at the prediction date.
-    df_test = df[(df['date'] >= FINAL_MATCH_DATE) & (df['team1'] == 'GT') & (df['team2'] == 'SRH')].copy()
+    df_test = df[(df['date'] >= FINAL_MATCH_DATE) & (df['team1'] == TEAM_A) & (df['team2'] == TEAM_B)].copy()
     if df_test.empty:
         df_test = df[df['date'] >= FINAL_MATCH_DATE].copy()
     df_test = df_test.sort_values('date').tail(1).copy()
@@ -177,7 +179,7 @@ def run_monte_carlo_simulation(df_train, df_test, feature_cols, rf_full, xgb_ful
     lower_ci = np.percentile(sim_probs, 2.5)
     upper_ci = np.percentile(sim_probs, 97.5)
     
-    print(f"Mean Win Probability for GT: {mean_prob*100:.2f}%")
+    print(f"Mean Win Probability for {TEAM_A}: {mean_prob*100:.2f}%")
     print(f"95% Confidence Interval: {lower_ci*100:.2f}% - {upper_ci*100:.2f}%")
     
     # Identify which features cause most variance (Sensitivity Analysis)
@@ -218,9 +220,9 @@ if __name__ == "__main__":
     cv_results = evaluate_models(X_train, y_train)
     
     print("\nTraining Stacking Ensemble...")
-    rf_full, xgb_full, lgb_full, meta, gt_win_prob = train_stacking_ensemble(X_train, y_train, X_test)
-    print(f"\nFinal Predicted GT Win Probability: {gt_win_prob*100:.2f}%")
-    print(f"Final Predicted SRH Win Probability: {(1-gt_win_prob)*100:.2f}%")
+    rf_full, xgb_full, lgb_full, meta, team_a_win_prob = train_stacking_ensemble(X_train, y_train, X_test)
+    print(f"\nFinal Predicted {TEAM_A} Win Probability: {team_a_win_prob*100:.2f}%")
+    print(f"Final Predicted {TEAM_B} Win Probability: {(1-team_a_win_prob)*100:.2f}%")
     
     # Save models for explainability step
     os.makedirs("models", exist_ok=True)

@@ -1,39 +1,39 @@
 feature,label,mean_abs_shap
-head_to_head_win_rate,Head-to-head win rate for Team A,0.21987109
-win_rate_venue_diff,Venue-specific win-rate advantage,0.2034223
-win_rate_chasing_diff,Chasing win-rate advantage,0.19577044
-win_rate_bat_first_diff,Batting-first win-rate advantage,0.18623623
-overall_win_rate_diff,Overall IPL win-rate advantage,0.17770545
-nrr_diff,Net run-rate advantage,0.12025357
-win_rate_last_5_diff,"Recent form, last five matches",0.11767631
-team1_toss_advantage,Specific toss advantage for Team A,0.100928456
-pp_bowl_wkts_diff,Powerplay wicket-taking advantage,0.07519928
-pp_bat_avg_diff,Powerplay batting-score advantage,0.042264313
-cap_form_diff,Captain form advantage,0.03725508
-team_exp_diff,Playoff experience advantage,0.027118973
-playoff_stage_path_diff,Playoff path advantage,0.02521538
-mid_bat_avg_diff,Middle-overs batting-score advantage,0.024782848
-bowl_economy_diff,Bowling economy difference,0.020852556
-right_hand_batter_diff,Right-hand batting matchup difference,0.020833837
-batting_hand_balance_diff,Batting hand balance difference,0.01951863
-death_bat_avg_diff,Death-overs batting-score advantage,0.014392042
-death_bowl_wkts_diff,Death-overs wicket-taking advantage,0.014077032
-dot_ball_bat_diff,Batting dot-ball pressure difference,0.011831038
-right_arm_bowler_diff,Right-arm bowling matchup difference,0.004327353
-team1_left_hand_batters,Team A left-hand batters listed,0.003899399
-weather_humidity_pct,Live weather humidity,0.0037485221
-weather_temperature_c,Live weather temperature,0.0036252402
-toss_win_match_win_corr,Venue toss-win/match-win tendency,0.0025464955
-team2_left_hand_batters,Team B left-hand batters listed,0.0020163357
-weather_dew_index,Weather dew index,0.00085002306
-weather_rain_probability_pct,Live weather rain probability,0.00059253315
-bat_first_win_rate_venue,Venue batting-first win rate,0.000584964
-left_hand_batter_diff,Left-hand batting matchup difference,0.0002317333
+head_to_head_win_rate,Head-to-head win rate for Team A,0.20898713
+win_rate_venue_diff,Venue-specific win-rate advantage,0.20289387
+win_rate_bat_first_diff,Batting-first win-rate advantage,0.19625784
+win_rate_chasing_diff,Chasing win-rate advantage,0.19293873
+overall_win_rate_diff,Overall IPL win-rate advantage,0.17770304
+nrr_diff,Net run-rate advantage,0.11819475
+win_rate_last_5_diff,"Recent form, last five matches",0.11149463
+team1_toss_advantage,Specific toss advantage for Team A,0.09544138
+pp_bowl_wkts_diff,Powerplay wicket-taking advantage,0.06421267
+pp_bat_avg_diff,Powerplay batting-score advantage,0.0463262
+death_bowl_wkts_diff,Death-overs wicket-taking advantage,0.034597006
+cap_form_diff,Captain form advantage,0.032794446
+bowl_economy_diff,Bowling economy difference,0.026983915
+mid_bat_avg_diff,Middle-overs batting-score advantage,0.020555625
+death_bat_avg_diff,Death-overs batting-score advantage,0.019102829
+team_exp_diff,Playoff experience advantage,0.017553112
+right_hand_batter_diff,Right-hand batting matchup difference,0.017042378
+batting_hand_balance_diff,Batting hand balance difference,0.01666639
+dot_ball_bat_diff,Batting dot-ball pressure difference,0.0092342915
+weather_dew_index,Weather dew index,0.0085787615
+weather_temperature_c,Live weather temperature,0.0037455119
+playoff_stage_path_diff,Playoff path advantage,0.003743515
+weather_humidity_pct,Live weather humidity,0.0032846068
+right_arm_bowler_diff,Right-arm bowling matchup difference,0.0032412433
+team1_left_hand_batters,Team A left-hand batters listed,0.0026893264
+team2_left_hand_batters,Team B left-hand batters listed,0.0021128024
+toss_win_match_win_corr,Venue toss-win/match-win tendency,0.0011271253
+weather_rain_probability_pct,Live weather rain probability,0.0006495986
+bat_first_win_rate_venue,Venue batting-first win rate,0.00035540145
+weather_heat_index,Weather heat index,0.0003457704
+left_hand_batter_diff,Left-hand batting matchup difference,0.00030643374
 win_rate_finals_diff,Historical final-match performance,0.0
-dew_factor_impact,Dew impact,0.0
 pitch_type_encoded,Pitch type encoding,0.0
 boundary_size_factor,Boundary-size factor,0.0
 avg_1st_inn_score_venue,Venue average first-innings score,0.0
+dew_factor_impact,Dew impact,0.0
 weather_dew_point_c,Live weather dew point,0.0
-weather_heat_index,Weather heat index,0.0
 left_arm_bowler_diff,Left-arm bowling matchup difference,0.0

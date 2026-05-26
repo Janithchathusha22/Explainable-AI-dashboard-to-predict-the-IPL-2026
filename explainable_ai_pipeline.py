@@ -33,11 +33,11 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 RANDOM_STATE = 42
-PREDICTION_TARGET_DATE = pd.Timestamp("2026-05-26")
+PREDICTION_TARGET_DATE = pd.Timestamp("2026-05-27")
 FINAL_MATCH_DATE = pd.Timestamp("2026-05-31")
 FINAL_DATE = FINAL_MATCH_DATE
 CV_FOLDS = 10
-TEAM_A = "GT"
+TEAM_A = "RCB"
 TEAM_B = "SRH"
 MODELS_DIR = Path("models")
 REPORTS_DIR = Path("reports")
@@ -334,14 +334,14 @@ def run_monte_carlo(data: dict, bundle: dict, n_simulations: int = 10000) -> tup
     simulated_raw = raw_final.reshape(1, -1) + noise
     probs = predict_stacked_from_raw(simulated_raw, data, bundle)
 
-    sim_df = pd.DataFrame({"gt_win_probability": probs})
+    sim_df = pd.DataFrame({"team_a_win_probability": probs})
     sim_df.to_csv(REPORTS_DIR / "monte_carlo_simulations.csv", index=False)
     np.save(MODELS_DIR / "sim_probs.npy", probs)
 
     plt.figure(figsize=(8, 5))
     plt.hist(probs * 100.0, bins=35, color="#2878b5", alpha=0.85, edgecolor="white")
     plt.axvline(probs.mean() * 100.0, color="#b52626", linewidth=2, label="Mean")
-    plt.xlabel("GT win probability (%)")
+    plt.xlabel(f"{TEAM_A} win probability (%)")
     plt.ylabel("Simulation count")
     plt.title("Monte Carlo win probability distribution")
     plt.legend()
@@ -496,7 +496,7 @@ def build_scenarios(data: dict, bundle: dict, top_player: pd.Series) -> pd.DataF
     raw_series = pd.Series(raw, index=feature_cols)
     raw_std = data["x_train_raw"].std(numeric_only=True).reindex(feature_cols).fillna(0.0)
     baseline = float(predict_stacked_from_raw(raw, data, bundle)[0])
-    rows = [{"scenario": "Baseline final input", "gt_win_probability": baseline}]
+    rows = [{"scenario": "Baseline final input", "team_a_win_probability": baseline}]
 
     if "team1_toss_advantage" in feature_cols:
         toss_corr = raw_series.get("toss_win_match_win_corr", 0.5)
@@ -504,15 +504,15 @@ def build_scenarios(data: dict, bundle: dict, top_player: pd.Series) -> pd.DataF
 
         gt_fields = raw_series.copy()
         gt_fields["team1_toss_advantage"] = toss_corr - 0.5
-        rows.append({"scenario": "GT wins toss and fields first", "gt_win_probability": float(predict_stacked_from_raw(gt_fields.to_numpy(), data, bundle)[0])})
+        rows.append({"scenario": f"{TEAM_A} wins toss and fields first", "team_a_win_probability": float(predict_stacked_from_raw(gt_fields.to_numpy(), data, bundle)[0])})
 
-        srh_fields = raw_series.copy()
-        srh_fields["team1_toss_advantage"] = 0.5 - toss_corr
-        rows.append({"scenario": "SRH wins toss and fields first", "gt_win_probability": float(predict_stacked_from_raw(srh_fields.to_numpy(), data, bundle)[0])})
+        team_b_fields = raw_series.copy()
+        team_b_fields["team1_toss_advantage"] = 0.5 - toss_corr
+        rows.append({"scenario": f"{TEAM_B} wins toss and fields first", "team_a_win_probability": float(predict_stacked_from_raw(team_b_fields.to_numpy(), data, bundle)[0])})
 
-        gt_bats = raw_series.copy()
-        gt_bats["team1_toss_advantage"] = bat_first_rate - 0.5
-        rows.append({"scenario": "GT wins toss and bats first", "gt_win_probability": float(predict_stacked_from_raw(gt_bats.to_numpy(), data, bundle)[0])})
+        team_a_bats = raw_series.copy()
+        team_a_bats["team1_toss_advantage"] = bat_first_rate - 0.5
+        rows.append({"scenario": f"{TEAM_A} wins toss and bats first", "team_a_win_probability": float(predict_stacked_from_raw(team_a_bats.to_numpy(), data, bundle)[0])})
 
     unavailable = raw_series.copy()
     direction = -1.0 if top_player["Team"] == TEAM_A else 1.0
@@ -529,13 +529,13 @@ def build_scenarios(data: dict, bundle: dict, top_player: pd.Series) -> pd.DataF
     rows.append(
         {
             "scenario": f"{top_player['Player_Name']} unavailable (approx feature shock)",
-            "gt_win_probability": float(predict_stacked_from_raw(unavailable.to_numpy(), data, bundle)[0]),
+            "team_a_win_probability": float(predict_stacked_from_raw(unavailable.to_numpy(), data, bundle)[0]),
         }
     )
 
     scenarios = pd.DataFrame(rows)
-    scenarios["srh_win_probability"] = 1.0 - scenarios["gt_win_probability"]
-    scenarios["gt_probability_shift_points"] = (scenarios["gt_win_probability"] - baseline) * 100.0
+    scenarios["team_b_win_probability"] = 1.0 - scenarios["team_a_win_probability"]
+    scenarios["team_a_probability_shift_points"] = (scenarios["team_a_win_probability"] - baseline) * 100.0
     scenarios.to_csv(REPORTS_DIR / "scenario_sensitivity.csv", index=False)
     return scenarios
 
@@ -545,9 +545,9 @@ def playoff_base_matches() -> pd.DataFrame:
 
     base = load_all_matches()
     base["date"] = pd.to_datetime(base["date"])
-    # Remove manually injected playoff/final results so the four-team cup simulation
-    # starts from the league-phase/top-four state instead of leaking known outcomes.
-    return base[base["match_id"].astype(int) < 202691].copy()
+    # Keep actual results known at the prediction date, including Semi Final 1.
+    # Future playoff rows are excluded so remaining matches are still simulated.
+    return base[base["date"] < PREDICTION_TARGET_DATE].copy()
 
 
 def future_match_feature_row(
@@ -660,11 +660,10 @@ def predict_fixture_probability(
 def build_playoff_cup_probabilities(data: dict, bundle: dict, n_simulations: int = 30000) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     rng = np.random.default_rng(RANDOM_STATE)
     base = playoff_base_matches()
-    teams = ["RCB", "GT", "SRH", "RR"]
+    teams = ["RCB", "SRH", "RR"]
     venues = {
-        "q1": "HPCA Stadium, Dharamshala",
-        "eliminator": "Maharaja Yadavindra Singh Stadium, New Chandigarh",
-        "q2": "Maharaja Yadavindra Singh Stadium, New Chandigarh",
+        "semi_1": "HPCA Stadium, Dharamshala",
+        "semi_2": "Maharaja Yadavindra Singh Stadium, New Chandigarh",
         "final": "Narendra Modi Stadium, Ahmedabad",
     }
 
@@ -673,8 +672,8 @@ def build_playoff_cup_probabilities(data: dict, bundle: dict, n_simulations: int
     def fixture(stage: str, team1: str, team2: str) -> dict:
         key = (stage, team1, team2)
         if key not in fixture_cache:
-            date_map = {"q1": "2026-05-26", "eliminator": "2026-05-27", "q2": "2026-05-29", "final": "2026-05-31"}
-            type_map = {"q1": "Qualifier 1", "eliminator": "Eliminator", "q2": "Qualifier 2", "final": "Final"}
+            date_map = {"semi_1": "2026-05-26", "semi_2": "2026-05-27", "final": "2026-05-31"}
+            type_map = {"semi_1": "Semi Final 1", "semi_2": "Semi Final 2", "final": "Final"}
             fixture_cache[key] = predict_fixture_probability(
                 base,
                 data,
@@ -687,29 +686,43 @@ def build_playoff_cup_probabilities(data: dict, bundle: dict, n_simulations: int
             )
         return fixture_cache[key]
 
-    q1 = fixture("q1", "RCB", "GT")
-    eliminator = fixture("eliminator", "SRH", "RR")
+    semi_1 = {
+        "team1": "RCB",
+        "team2": "GT",
+        "venue": venues["semi_1"],
+        "date": "2026-05-26",
+        "match_type": "Semi Final 1",
+        "team1_win_probability": 1.0,
+        "team2_win_probability": 0.0,
+        "scenarios": [
+            {
+                "team1": "RCB",
+                "team2": "GT",
+                "venue": venues["semi_1"],
+                "date": "2026-05-26",
+                "match_type": "Semi Final 1",
+                "toss_winner": "GT",
+                "toss_decision": "field",
+                "scenario_weight": 1.0,
+                "team1_stacked_probability": 1.0,
+                "team1_xgb_probability": 1.0,
+                "actual_result": "RCB won by 92 runs",
+            }
+        ],
+    }
+    fixture_cache[("semi_1", "RCB", "GT")] = semi_1
+    semi_2 = fixture("semi_2", "SRH", "RR")
 
     champion_counts = {team: 0 for team in teams}
     final_counts = {team: 0 for team in teams}
     final_pair_counts: dict[str, int] = {}
-    first_stage_counts = {"RCB_Q1_win": 0, "GT_Q1_win": 0, "SRH_Elim_win": 0, "RR_Elim_win": 0}
 
     for _ in range(n_simulations):
-        q1_winner = "RCB" if rng.random() < q1["team1_win_probability"] else "GT"
-        q1_loser = "GT" if q1_winner == "RCB" else "RCB"
-        first_stage_counts[f"{q1_winner}_Q1_win"] += 1
-
-        elim_winner = "SRH" if rng.random() < eliminator["team1_win_probability"] else "RR"
-        first_stage_counts[f"{elim_winner}_Elim_win"] += 1
-
-        q2 = fixture("q2", q1_loser, elim_winner)
-        q2_winner = q1_loser if rng.random() < q2["team1_win_probability"] else elim_winner
-
-        finalist_1, finalist_2 = q1_winner, q2_winner
+        finalist_1 = "RCB"
+        finalist_2 = "SRH" if rng.random() < semi_2["team1_win_probability"] else "RR"
         final_counts[finalist_1] += 1
         final_counts[finalist_2] += 1
-        pair_name = " vs ".join(sorted([finalist_1, finalist_2]))
+        pair_name = f"{finalist_1} vs {finalist_2}"
         final_pair_counts[pair_name] = final_pair_counts.get(pair_name, 0) + 1
 
         final = fixture("final", finalist_1, finalist_2)
@@ -723,8 +736,8 @@ def build_playoff_cup_probabilities(data: dict, bundle: dict, n_simulations: int
                 "team": team,
                 "cup_probability": champion_counts[team] / n_simulations,
                 "final_appearance_probability": final_counts[team] / n_simulations,
-                "q1_win_probability": q1["team1_win_probability"] if team == "RCB" else (q1["team2_win_probability"] if team == "GT" else np.nan),
-                "eliminator_win_probability": eliminator["team1_win_probability"] if team == "SRH" else (eliminator["team2_win_probability"] if team == "RR" else np.nan),
+                "semi_1_win_probability": 1.0 if team == "RCB" else np.nan,
+                "semi_2_win_probability": semi_2["team1_win_probability"] if team == "SRH" else (semi_2["team2_win_probability"] if team == "RR" else np.nan),
             }
         )
     team_summary = pd.DataFrame(team_rows).sort_values("cup_probability", ascending=False)
@@ -877,27 +890,44 @@ def write_final_report(
     player_forecast: pd.DataFrame,
 ) -> Path:
     final_row = data["df_test"].iloc[0]
-    gt_prob = bundle["stacked_prob"]
-    srh_prob = 1.0 - gt_prob
-    mean_prob = sim_df["gt_win_probability"].mean()
-    ci_low = sim_df["gt_win_probability"].quantile(0.025)
-    ci_high = sim_df["gt_win_probability"].quantile(0.975)
+    team_a_prob = bundle["stacked_prob"]
+    team_b_prob = 1.0 - team_a_prob
+    mean_prob = sim_df["team_a_win_probability"].mean()
+    ci_low = sim_df["team_a_win_probability"].quantile(0.025)
+    ci_high = sim_df["team_a_win_probability"].quantile(0.975)
     ci_width = (ci_high - ci_low) * 100.0
     base_probs = np.array(list(bundle["final_base_probs"].values()), dtype=float)
     model_disagreement = float(base_probs.max() - base_probs.min())
     mean_auc = float(metrics["auc_roc"].mean())
-    if abs(gt_prob - 0.5) < 0.07 or model_disagreement > 0.25 or mean_auc < 0.56:
+    if abs(team_a_prob - 0.5) < 0.07 or model_disagreement > 0.25 or mean_auc < 0.56:
         confidence = "LOW"
-    elif abs(gt_prob - 0.5) >= 0.12 and ci_width <= 12:
+    elif abs(team_a_prob - 0.5) >= 0.12 and ci_width <= 12:
         confidence = "HIGH"
     else:
         confidence = "MEDIUM"
-    predicted = TEAM_A if gt_prob >= 0.5 else TEAM_B
+    predicted = TEAM_A if team_a_prob >= 0.5 else TEAM_B
     top_player = players.iloc[0]
 
     model_probs = pd.DataFrame(
-        [{"model": name, "gt_win_probability": prob, "srh_win_probability": 1.0 - prob} for name, prob in bundle["final_base_probs"].items()]
-        + [{"model": "Stacked Ensemble", "gt_win_probability": gt_prob, "srh_win_probability": srh_prob}]
+        [
+            {
+                "model": name,
+                "team_a": TEAM_A,
+                "team_b": TEAM_B,
+                "team_a_win_probability": prob,
+                "team_b_win_probability": 1.0 - prob,
+            }
+            for name, prob in bundle["final_base_probs"].items()
+        ]
+        + [
+            {
+                "model": "Stacked Ensemble",
+                "team_a": TEAM_A,
+                "team_b": TEAM_B,
+                "team_a_win_probability": team_a_prob,
+                "team_b_win_probability": team_b_prob,
+            }
+        ]
     )
     model_probs.to_csv(REPORTS_DIR / "final_model_probabilities.csv", index=False)
     meta_weights = pd.DataFrame(
@@ -915,16 +945,17 @@ def write_final_report(
     lines = [
         "# IPL 2026 Final Explainable AI Prediction Report",
         "",
-        f"Final: {TEAM_A} vs {TEAM_B}",
+        f"Featured final candidate: {TEAM_A} vs {TEAM_B}",
         f"Venue: {final_row['venue']}",
         f"Final match date: {pd.to_datetime(final_row['date']).date()}",
         f"Prediction target date: {PREDICTION_TARGET_DATE.date()}",
+        "Known playoff update: RCB beat GT by 92 runs in Semi Final 1 (RCB 254/5, GT 162), so RCB is locked as the first finalist.",
         "",
         "## 1. Predicted Winner",
         "",
         f"Predicted winner: **{predicted}**",
-        f"{TEAM_A} win probability: **{gt_prob * 100:.1f}%**",
-        f"{TEAM_B} win probability: **{srh_prob * 100:.1f}%**",
+        f"{TEAM_A} win probability: **{team_a_prob * 100:.1f}%**",
+        f"{TEAM_B} win probability: **{team_b_prob * 100:.1f}%**",
         f"Monte Carlo mean: **{mean_prob * 100:.1f}%** for {TEAM_A}",
         f"Monte Carlo 95% CI: **{ci_low * 100:.1f}% to {ci_high * 100:.1f}%**",
         f"Confidence level: **{confidence}**",
@@ -948,7 +979,7 @@ def write_final_report(
     lines.extend(
         [
             "",
-            "Note: these four-team odds simulate the playoff bracket from the top-four state and remove manually injected playoff/final results to reduce leakage. The GT vs SRH final section uses the known-finalist final row.",
+            "Note: these odds lock the known Semi Final 1 result, then simulate Semi Final 2 and the Final. The featured final section is one candidate final row until the other finalist is confirmed.",
             "",
             "## 3. Model Confidence",
         "",
@@ -956,14 +987,14 @@ def write_final_report(
     )
 
     for _, row in model_probs.iterrows():
-        lines.append(f"- {row['model']}: {row['gt_win_probability'] * 100:.1f}% {TEAM_A}, {row['srh_win_probability'] * 100:.1f}% {TEAM_B}")
+        lines.append(f"- {row['model']}: {row['team_a_win_probability'] * 100:.1f}% {TEAM_A}, {row['team_b_win_probability'] * 100:.1f}% {TEAM_B}")
 
     lines.extend(["", "Stacking meta-learner weights:", ""])
     for _, row in meta_weights.iterrows():
         sign = "+" if row["meta_weight"] >= 0 else ""
         lines.append(f"- {row['base_model']}: {sign}{row['meta_weight']:.4f}")
 
-    if (gt_prob < 0.5 and (base_probs > 0.5).all()) or (gt_prob > 0.5 and (base_probs < 0.5).all()):
+    if (team_a_prob < 0.5 and (base_probs > 0.5).all()) or (team_a_prob > 0.5 and (base_probs < 0.5).all()):
         lines.extend(
             [
                 "",
@@ -972,7 +1003,7 @@ def write_final_report(
         )
 
     lines.extend(["", "## 4. SHAP Key Deciding Factors", ""])
-    if (gt_prob < 0.5 and bundle["final_base_probs"]["XGBoost"] > 0.5) or (gt_prob > 0.5 and bundle["final_base_probs"]["XGBoost"] < 0.5):
+    if (team_a_prob < 0.5 and bundle["final_base_probs"]["XGBoost"] > 0.5) or (team_a_prob > 0.5 and bundle["final_base_probs"]["XGBoost"] < 0.5):
         lines.extend(
             [
                 "Important: the SHAP explanation below is for the XGBoost tree model, as required for tree SHAP. In this run XGBoost favors a different side than the final stacked probability, so these factors explain the tree-model push, while the final stacked winner remains the calibrated ensemble output.",
@@ -1000,10 +1031,10 @@ def write_final_report(
             f"[bat win {row['Batting_Match_Winner_Probability'] * 100:.1f}%, bowl win {row['Bowling_Match_Winner_Probability'] * 100:.1f}%]"
         )
 
-    abhishek = player_forecast[player_forecast["Player_Name"].eq("Abhishek Sharma")]
-    lines.extend(["", "## 6. Abhishek Sharma Performance Forecast", ""])
-    if not abhishek.empty:
-        row = abhishek.iloc[0]
+    featured_forecast = player_forecast[player_forecast["Player_Name"].eq(top_player["Player_Name"])]
+    lines.extend(["", f"## 6. {top_player['Player_Name']} Performance Forecast", ""])
+    if not featured_forecast.empty:
+        row = featured_forecast.iloc[0]
         lines.extend(
             [
                 f"Expected batting runs: **{row['expected_runs']:.1f}**",
@@ -1016,18 +1047,18 @@ def write_final_report(
                 f"Expected wickets if he bowls: **{row['expected_wickets']:.2f}**",
                 f"Probability of taking at least one wicket: **{row['probability_takes_wicket'] * 100:.1f}%**",
                 "",
-                "Interpretation: Abhishek is projected mainly as a batting/POTM candidate. His bowling contribution is forecast as secondary unless SRH use him for matchup overs.",
+                f"Interpretation: {top_player['Player_Name']} is the current top POTM candidate for this featured final matchup.",
             ]
         )
     else:
-        lines.append("Abhishek Sharma was not found in the player forecast table.")
+        lines.append(f"{top_player['Player_Name']} was not found in the player forecast table.")
 
     lines.extend(["", "## 7. Scenario Sensitivity", ""])
     for _, row in scenarios.iterrows():
-        sign = "+" if row["gt_probability_shift_points"] >= 0 else ""
+        sign = "+" if row["team_a_probability_shift_points"] >= 0 else ""
         lines.append(
-            f"- {row['scenario']}: {TEAM_A} {row['gt_win_probability'] * 100:.1f}%, "
-            f"{TEAM_B} {row['srh_win_probability'] * 100:.1f}% ({sign}{row['gt_probability_shift_points']:.2f} pts)"
+            f"- {row['scenario']}: {TEAM_A} {row['team_a_win_probability'] * 100:.1f}%, "
+            f"{TEAM_B} {row['team_b_win_probability'] * 100:.1f}% ({sign}{row['team_a_probability_shift_points']:.2f} pts)"
         )
 
     lines.extend(["", "## 8. Uncertainty Factors", ""])
@@ -1039,7 +1070,7 @@ def write_final_report(
             "",
             "## 9. XAI Method",
             "",
-            "The stacked ensemble is used for final probability. SHAP is applied to the XGBoost tree model, not directly to the stacked logistic meta-learner, because tree SHAP gives stable feature-level explanations for the base model. The local SHAP rows explain which inputs push the GT-vs-SRH prediction toward GT or SRH. The feature matrix includes playoff live-weather inputs and right/left matchup inputs when those CSV rows are available.",
+            f"The stacked ensemble is used for final probability. SHAP is applied to the XGBoost tree model, not directly to the stacked logistic meta-learner, because tree SHAP gives stable feature-level explanations for the base model. The local SHAP rows explain which inputs push the {TEAM_A}-vs-{TEAM_B} candidate final prediction toward either side. The feature matrix includes playoff live-weather inputs, right/left matchup inputs, and the known Q1 result when those CSV rows are available.",
             "",
             "Generated files:",
             "- reports/shap_global_bar.png",

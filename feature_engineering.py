@@ -28,10 +28,11 @@ TEAM_MAPPING = {
     'Pune Warriors': 'PWI'
 }
 
-PREDICTION_TARGET_DATE = pd.Timestamp("2026-05-26")
+PREDICTION_TARGET_DATE = pd.Timestamp("2026-05-27")
 FINAL_MATCH_DATE = pd.Timestamp("2026-05-31")
 WEATHER_FILE = "ipl_playoffs_live_weather.csv"
 RIGHT_LEFT_FILE = "right_left.csv"
+Q1_SCORECARD_FILE = "ipl_2026_q1_rcb_vs_gt.csv"
 
 
 def normalize_team_name(value):
@@ -274,29 +275,61 @@ def get_recent_matches_not_in_del():
     }
     return pd.DataFrame([match_69])
 
+
+def load_q1_actual_match():
+    match = {
+        'match_id': 202691,
+        'date': pd.to_datetime('2026-05-26'),
+        'season': '2026',
+        'city': 'Dharamshala',
+        'venue': 'HPCA Stadium, Dharamshala',
+        'team1': 'RCB',
+        'team2': 'GT',
+        'toss_winner': 'GT',
+        'toss_decision': 'field',
+        'winner': 'RCB',
+        'player_of_match': 'Rajat Patidar',
+        'match_type': 'Semi Final',
+        'overs': 20,
+        'balls_per_over': 6
+    }
+
+    if not os.path.exists(Q1_SCORECARD_FILE):
+        return match
+
+    scorecard = pd.read_csv(Q1_SCORECARD_FILE)
+    required = {'Taldea', 'Team_Total'}
+    if not required.issubset(scorecard.columns):
+        return match
+
+    scorecard['team'] = scorecard['Taldea'].apply(normalize_team_name)
+    scorecard['Team_Total'] = pd.to_numeric(scorecard['Team_Total'], errors='coerce')
+    totals = scorecard.dropna(subset=['Team_Total']).groupby('team')['Team_Total'].max()
+    if {'RCB', 'GT'}.issubset(set(totals.index)):
+        match['winner'] = 'RCB' if totals['RCB'] > totals['GT'] else 'GT'
+
+    if 'Venue' in scorecard.columns and scorecard['Venue'].notna().any():
+        match['venue'] = str(scorecard['Venue'].dropna().iloc[0])
+        match['city'] = match['venue'].split(',')[-1].strip()
+    if 'Match_Date' in scorecard.columns and scorecard['Match_Date'].notna().any():
+        match['date'] = pd.to_datetime(scorecard['Match_Date'].dropna().iloc[0])
+    if 'Match_Type' in scorecard.columns and scorecard['Match_Type'].notna().any():
+        match['match_type'] = str(scorecard['Match_Type'].dropna().iloc[0])
+
+    return match
+
+
 def load_all_matches():
     df_hist = load_clean_historical_matches()
     df_del_reconstructed = reconstruct_2026_matches_from_deliveries()
     df_extra = get_recent_matches_not_in_del()
     
-    # Playoff Matches
+    q1_actual = load_q1_actual_match()
+
+    # Playoff Matches. Semi Final 1 is an actual result; the remaining rows are
+    # future fixtures used only for candidate final feature generation.
     playoffs = [
-        {
-            'match_id': 202691,
-            'date': pd.to_datetime('2026-05-26'),
-            'season': '2026',
-            'city': 'Dharamshala',
-            'venue': 'HPCA Stadium, Dharamshala',
-            'team1': 'RCB',
-            'team2': 'GT',
-            'toss_winner': 'RCB',
-            'toss_decision': 'field',
-            'winner': 'GT',
-            'player_of_match': 'Mohammed Siraj',
-            'match_type': 'Playoff',
-            'overs': 20,
-            'balls_per_over': 6
-        },
+        q1_actual,
         {
             'match_id': 202692,
             'date': pd.to_datetime('2026-05-27'),
@@ -309,23 +342,7 @@ def load_all_matches():
             'toss_decision': 'bat',
             'winner': 'SRH',
             'player_of_match': 'Ishan Kishan',
-            'match_type': 'Playoff',
-            'overs': 20,
-            'balls_per_over': 6
-        },
-        {
-            'match_id': 202693,
-            'date': pd.to_datetime('2026-05-29'),
-            'season': '2026',
-            'city': 'New Chandigarh',
-            'venue': 'Maharaja Yadavindra Singh Stadium, New Chandigarh',
-            'team1': 'RCB',
-            'team2': 'SRH',
-            'toss_winner': 'SRH',
-            'toss_decision': 'field',
-            'winner': 'SRH',
-            'player_of_match': 'Abhishek Sharma',
-            'match_type': 'Playoff',
+            'match_type': 'Semi Final',
             'overs': 20,
             'balls_per_over': 6
         },
@@ -337,11 +354,11 @@ def load_all_matches():
             'season': '2026',
             'city': 'Ahmedabad',
             'venue': 'Narendra Modi Stadium, Ahmedabad',
-            'team1': 'GT',
+            'team1': 'RCB',
             'team2': 'SRH',
-            'toss_winner': 'GT',
+            'toss_winner': 'RCB',
             'toss_decision': 'field',
-            'winner': 'GT', # target label (dummy for feature creation)
+            'winner': 'RCB', # target label (dummy for feature creation)
             'player_of_match': 'Unknown',
             'match_type': 'Final',
             'overs': 20,
@@ -515,8 +532,9 @@ def calculate_match_features(df_all):
         t1_exp = exp_map.get(team1, 5)
         t2_exp = exp_map.get(team2, 5)
         
-        # path reached (qualifier direct -> 1.0, eliminator -> 0.5)
-        path_map = {'GT': 1.0, 'RCB': 1.0, 'SRH': 0.5, 'RR': 0.5}
+        # path reached after Semi Final 1: RCB is direct finalist; everyone else
+        # must win at least one more playoff.
+        path_map = {'RCB': 1.0, 'GT': 0.5, 'SRH': 0.5, 'RR': 0.5}
         t1_path = path_map.get(team1, 0.5)
         t2_path = path_map.get(team2, 0.5)
         
