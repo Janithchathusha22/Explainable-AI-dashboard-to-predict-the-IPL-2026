@@ -1,0 +1,21 @@
+Venue,Date,Time_IST,Temperature_C,Humidity_Pct,Dew_Point_C,Rain_Probability_Pct
+Dharamshala (HPCA),2026-05-26,19:00,22.5,65,14.5,10
+Dharamshala (HPCA),2026-05-26,20:00,22.0,68,14.5,10
+Dharamshala (HPCA),2026-05-26,21:00,21.5,71,14.5,10
+Dharamshala (HPCA),2026-05-26,22:00,21.0,74,14.5,10
+Dharamshala (HPCA),2026-05-26,23:00,20.5,77,14.5,10
+Chandigarh (MYS),2026-05-27,19:00,34.0,45,18.0,5
+Chandigarh (MYS),2026-05-27,20:00,33.2,49,18.0,5
+Chandigarh (MYS),2026-05-27,21:00,32.4,53,18.0,5
+Chandigarh (MYS),2026-05-27,22:00,31.6,57,18.0,5
+Chandigarh (MYS),2026-05-27,23:00,30.8,61,18.0,5
+Chandigarh (MYS),2026-05-29,19:00,34.0,45,18.0,5
+Chandigarh (MYS),2026-05-29,20:00,33.2,49,18.0,5
+Chandigarh (MYS),2026-05-29,21:00,32.4,53,18.0,5
+Chandigarh (MYS),2026-05-29,22:00,31.6,57,18.0,5
+Chandigarh (MYS),2026-05-29,23:00,30.8,61,18.0,5
+Ahmedabad (NMS),2026-05-31,19:00,36.5,55,22.0,0
+Ahmedabad (NMS),2026-05-31,20:00,35.9,60,22.0,0
+Ahmedabad (NMS),2026-05-31,21:00,35.3,65,22.0,0
+Ahmedabad (NMS),2026-05-31,22:00,34.7,70,22.0,0
+Ahmedabad (NMS),2026-05-31,23:00,34.1,75,22.0,0

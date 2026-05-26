@@ -1,0 +1,49 @@
+team1,team2,venue,date,match_type,toss_winner,toss_decision,scenario_weight,team1_stacked_probability,team1_xgb_probability
+RCB,GT,"HPCA Stadium, Dharamshala",2026-05-26,Qualifier 1,RCB,field,0.36,0.47016939966995613,0.2159339040517807
+RCB,GT,"HPCA Stadium, Dharamshala",2026-05-26,Qualifier 1,RCB,bat,0.14,0.47391666288383283,0.24089983105659485
+RCB,GT,"HPCA Stadium, Dharamshala",2026-05-26,Qualifier 1,GT,field,0.36,0.47391666288383283,0.24089983105659485
+RCB,GT,"HPCA Stadium, Dharamshala",2026-05-26,Qualifier 1,GT,bat,0.14,0.47016939966995613,0.2159339040517807
+SRH,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-27,Eliminator,SRH,field,0.275,0.48036130708691727,0.7172945141792297
+SRH,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-27,Eliminator,SRH,bat,0.225,0.47912232703638086,0.6733829379081726
+SRH,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-27,Eliminator,RR,field,0.275,0.47912232703638086,0.6733829379081726
+SRH,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-27,Eliminator,RR,bat,0.225,0.48036130708691727,0.7172945141792297
+RCB,SRH,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,RCB,field,0.275,0.4820940008571619,0.9136796593666077
+RCB,SRH,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,RCB,bat,0.225,0.4817031053827697,0.9117818474769592
+RCB,SRH,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,SRH,field,0.275,0.4817031053827697,0.9117818474769592
+RCB,SRH,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,SRH,bat,0.225,0.4820940008571619,0.9136796593666077
+GT,SRH,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,GT,field,0.35,0.47973403424401007,0.8305056691169739
+GT,SRH,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,GT,bat,0.15,0.47792777249800605,0.7961390018463135
+GT,SRH,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,SRH,field,0.35,0.47792777249800605,0.7961390018463135
+GT,SRH,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,SRH,bat,0.15,0.47973403424401007,0.8305056691169739
+GT,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,GT,field,0.275,0.4609063053485059,0.3248825967311859
+GT,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,GT,bat,0.225,0.4593119368263125,0.2290496677160263
+GT,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,RR,field,0.275,0.4593119368263125,0.2290496677160263
+GT,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,RR,bat,0.225,0.4609063053485059,0.3248825967311859
+RCB,RR,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,field,0.35,0.46775587985451933,0.5160305500030518
+RCB,RR,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,bat,0.15,0.46413611356221574,0.44093266129493713
+RCB,RR,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RR,field,0.35,0.46413611356221574,0.44093266129493713
+RCB,RR,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RR,bat,0.15,0.46775587985451933,0.5160305500030518
+GT,SRH,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,GT,field,0.275,0.4730583634052943,0.6539568305015564
+GT,SRH,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,GT,bat,0.225,0.47102287681109767,0.5907975435256958
+GT,SRH,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,SRH,field,0.275,0.47102287681109767,0.5907975435256958
+GT,SRH,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,SRH,bat,0.225,0.4730583634052943,0.6539568305015564
+RCB,GT,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,field,0.35,0.47358139601431826,0.30572956800460815
+RCB,GT,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,bat,0.15,0.4745186992463159,0.2651546597480774
+RCB,GT,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,GT,field,0.35,0.4745186992463159,0.2651546597480774
+RCB,GT,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,GT,bat,0.15,0.47358139601431826,0.30572956800460815
+RCB,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,RCB,field,0.275,0.4695240726583906,0.5673925876617432
+RCB,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,RCB,bat,0.225,0.4659978074434439,0.49242526292800903
+RCB,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,RR,field,0.275,0.4659978074434439,0.49242526292800903
+RCB,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-29,Qualifier 2,RR,bat,0.225,0.4695240726583906,0.5673925876617432
+GT,RCB,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,GT,field,0.35,0.48340844809748457,0.4856104552745819
+GT,RCB,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,GT,bat,0.15,0.47530804844760366,0.3023485243320465
+GT,RCB,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,field,0.35,0.47530804844760366,0.3023485243320465
+GT,RCB,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,bat,0.15,0.48340844809748457,0.4856104552745819
+GT,RR,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,GT,field,0.35,0.4558659660713951,0.2886658310890198
+GT,RR,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,GT,bat,0.15,0.45469715672282435,0.1912280172109604
+GT,RR,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RR,field,0.35,0.45469715672282435,0.1912280172109604
+GT,RR,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RR,bat,0.15,0.4558659660713951,0.2886658310890198
+RCB,SRH,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,field,0.35,0.48017826038561456,0.9285741448402405
+RCB,SRH,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,bat,0.15,0.4787877177745822,0.9048560261726379
+RCB,SRH,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,SRH,field,0.35,0.4787877177745822,0.9048560261726379
+RCB,SRH,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,SRH,bat,0.15,0.48017826038561456,0.9285741448402405

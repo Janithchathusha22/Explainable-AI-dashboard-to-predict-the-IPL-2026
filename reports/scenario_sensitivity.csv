@@ -1,0 +1,6 @@
+scenario,gt_win_probability,srh_win_probability,gt_probability_shift_points
+Baseline final input,0.4745206349815087,0.5254793650184912,0.0
+GT wins toss and fields first,0.4745206349815087,0.5254793650184912,0.0
+SRH wins toss and fields first,0.4732706420614899,0.5267293579385102,-0.12499929200188165
+GT wins toss and bats first,0.4732706420614899,0.5267293579385102,-0.12499929200188165
+Abhishek Sharma unavailable (approx feature shock),0.47729229687910546,0.5227077031208945,0.27716618975967555

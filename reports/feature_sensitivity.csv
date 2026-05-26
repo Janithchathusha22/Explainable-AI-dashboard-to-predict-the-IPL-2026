@@ -1,0 +1,39 @@
+feature,label,probability_variance,probability_range_points
+win_rate_chasing_diff,Chasing win-rate advantage,2.6524813640354803e-06,0.7547290180038468
+right_hand_batter_diff,Right-hand batting matchup difference,1.9016003745575465e-06,0.3661657592229306
+team_exp_diff,Playoff experience advantage,1.8969529865357559e-06,0.4145601550840927
+pp_bowl_wkts_diff,Powerplay wicket-taking advantage,1.8436526845764156e-06,0.48337594788737115
+win_rate_venue_diff,Venue-specific win-rate advantage,1.3862351962005356e-06,0.7906576252903808
+overall_win_rate_diff,Overall IPL win-rate advantage,1.276163462037711e-06,0.6046727264257035
+win_rate_bat_first_diff,Batting-first win-rate advantage,4.505452331231687e-07,0.3285875126203819
+nrr_diff,Net run-rate advantage,4.104068853378035e-07,0.32773267508011683
+death_bowl_wkts_diff,Death-overs wicket-taking advantage,2.70899976938233e-07,0.11756930268528865
+death_bat_avg_diff,Death-overs batting-score advantage,1.8520957041562872e-07,0.14664993461042108
+cap_form_diff,Captain form advantage,1.3481200473087531e-07,0.08678197929669618
+win_rate_last_5_diff,"Recent form, last five matches",1.3465771666252335e-07,0.12777206276098352
+dot_ball_bat_diff,Batting dot-ball pressure difference,1.3289891869225623e-07,0.08894087711379672
+head_to_head_win_rate,Head-to-head win rate for Team A,1.0152370238270436e-07,0.14827222253340766
+playoff_stage_path_diff,Playoff path advantage,9.156693710682185e-08,0.19587549170858032
+bowl_economy_diff,Bowling economy difference,8.439358047079761e-08,0.08906415006655899
+mid_bat_avg_diff,Middle-overs batting-score advantage,7.885869238065616e-08,0.07942458387955598
+batting_hand_balance_diff,Batting hand balance difference,4.844268265385103e-08,0.050053751019796255
+pp_bat_avg_diff,Powerplay batting-score advantage,4.57861611827563e-08,0.058942467086603445
+left_hand_batter_diff,Left-hand batting matchup difference,1.217074353563376e-08,0.02832020145934755
+toss_win_match_win_corr,Venue toss-win/match-win tendency,6.196305605799413e-09,0.01578203663554767
+team1_left_hand_batters,Team A left-hand batters listed,5.95165647306648e-09,0.025989583440649833
+right_arm_bowler_diff,Right-arm bowling matchup difference,2.5403702675422563e-09,0.010084956440831183
+win_rate_finals_diff,Historical final-match performance,3.0814879110195774e-33,0.0
+avg_1st_inn_score_venue,Venue average first-innings score,3.0814879110195774e-33,0.0
+dew_factor_impact,Dew impact,3.0814879110195774e-33,0.0
+pitch_type_encoded,Pitch type encoding,3.0814879110195774e-33,0.0
+boundary_size_factor,Boundary-size factor,3.0814879110195774e-33,0.0
+bat_first_win_rate_venue,Venue batting-first win rate,3.0814879110195774e-33,0.0
+team1_toss_advantage,Specific toss advantage for Team A,3.0814879110195774e-33,0.0
+weather_dew_index,Weather dew index,3.0814879110195774e-33,0.0
+weather_rain_probability_pct,Live weather rain probability,3.0814879110195774e-33,0.0
+weather_dew_point_c,Live weather dew point,3.0814879110195774e-33,0.0
+weather_humidity_pct,Live weather humidity,3.0814879110195774e-33,0.0
+weather_temperature_c,Live weather temperature,3.0814879110195774e-33,0.0
+weather_heat_index,Weather heat index,3.0814879110195774e-33,0.0
+team2_left_hand_batters,Team B left-hand batters listed,3.0814879110195774e-33,0.0
+left_arm_bowler_diff,Left-arm bowling matchup difference,3.0814879110195774e-33,0.0

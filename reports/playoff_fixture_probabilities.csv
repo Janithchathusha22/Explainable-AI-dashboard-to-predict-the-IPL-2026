@@ -1,0 +1,13 @@
+match_type,team1,team2,venue,team1_win_probability,team2_win_probability
+Eliminator,SRH,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",0.4797418170616491,0.5202581829383509
+Final,GT,RCB,"Narendra Modi Stadium, Ahmedabad",0.4793582482725441,0.520641751727456
+Final,GT,RR,"Narendra Modi Stadium, Ahmedabad",0.45528156139710974,0.5447184386028903
+Final,GT,SRH,"Narendra Modi Stadium, Ahmedabad",0.47883090337100803,0.5211690966289919
+Final,RCB,GT,"Narendra Modi Stadium, Ahmedabad",0.4740500476303171,0.5259499523696829
+Final,RCB,RR,"Narendra Modi Stadium, Ahmedabad",0.4659459967083675,0.5340540032916326
+Final,RCB,SRH,"Narendra Modi Stadium, Ahmedabad",0.47948298908009834,0.5205170109199017
+Qualifier 1,RCB,GT,"HPCA Stadium, Dharamshala",0.4720430312768945,0.5279569687231055
+Qualifier 2,GT,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",0.46010912108740926,0.5398908789125907
+Qualifier 2,GT,SRH,"Maharaja Yadavindra Singh Stadium, New Chandigarh",0.47204062010819603,0.527959379891804
+Qualifier 2,RCB,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",0.46776094005091723,0.5322390599490827
+Qualifier 2,RCB,SRH,"Maharaja Yadavindra Singh Stadium, New Chandigarh",0.4818985531199659,0.5181014468800341

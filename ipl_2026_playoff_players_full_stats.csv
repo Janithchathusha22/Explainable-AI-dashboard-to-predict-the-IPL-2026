@@ -1,0 +1,21 @@
+Player_Name,Team,Role,Matches_Played,Batting_Runs,Batting_Strike_Rate,Sixes_Hit,Bowling_Type,Wickets_Taken,Bowling_Economy
+Virat Kohli,RCB,Batsman,14,557,163.82,28,None,0,0.0
+Faf du Plessis,RCB,Batsman,14,420,145.5,19,None,0,0.0
+Bhuvneshwar Kumar,RCB,Bowler,14,35,112.9,1,Pace,24,8.07
+Glenn Maxwell,RCB,All-Rounder,12,210,185.4,15,Spin (Off-Break),8,8.45
+Rajat Patidar,RCB,Batsman,14,385,152.1,22,None,0,0.0
+Sai Sudharsan,GT,Batsman,14,638,157.92,24,None,0,0.0
+Shubman Gill,GT,Batsman,13,616,161.67,26,None,0,0.0
+Kagiso Rabada,GT,Bowler,14,12,140.0,0,Pace,24,9.19
+Mohammed Siraj,GT,Bowler,14,8,88.5,0,Pace,17,8.59
+Rashid Khan,GT,Bowler,14,95,165.3,8,Spin (Leg-Break),19,8.72
+Heinrich Klaasen,SRH,Wicketkeeper-Batsman,14,606,159.47,38,None,0,0.0
+Ishan Kishan,SRH,Wicketkeeper-Batsman,14,569,178.36,32,None,0,0.0
+Abhishek Sharma,SRH,All-Rounder,14,563,206.22,41,Spin (Left-arm),11,9.12
+Pat Cummins,SRH,Bowler,14,115,155.0,7,Pace,14,8.8
+Eshan Malinga,SRH,Bowler,14,0,0.0,0,Pace,19,9.28
+Vaibhav Sooryavanshi,RR,Batsman,14,583,232.27,45,None,0,0.0
+Sanju Samson,RR,Wicketkeeper-Batsman,14,442,151.2,21,None,0,0.0
+Jofra Archer,RR,Bowler,14,15,120.0,1,Pace,21,8.77
+Yuzvendra Chahal,RR,Bowler,14,4,66.67,0,Spin (Leg-Break),14,8.21
+Riyan Parag,RR,All-Rounder,14,395,158.4,23,Spin (Leg-Break),5,8.9

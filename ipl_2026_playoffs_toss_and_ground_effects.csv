@@ -1,0 +1,7 @@
+Venue_Name,Playoff_Match_Type,Toss_Decision_Choice,Historical_Win_Count,Win_Percentage_Effect,Avg_1st_Innings_Score,Dew_Factor_Probability,Chasing_Advantage_Multiplier
+"HPCA Stadium, Dharamshala",Qualifier 1 (RCB vs GT),Bat First,8,26.67,178,Low/None,1.2
+"HPCA Stadium, Dharamshala",Qualifier 1 (RCB vs GT),Bowl First,22,73.33,162,Heavy (Night),3.8
+"Maharaja Yadavindra Stadium, Chandigarh",Eliminator / Qualifier 2,Bat First,9,45.0,185,Low,1.1
+"Maharaja Yadavindra Stadium, Chandigarh",Eliminator / Qualifier 2,Bowl First,11,55.0,172,Moderate,1.6
+"Narendra Modi Stadium, Ahmedabad",Grand Final,Bat First,14,35.9,192,Medium,1.4
+"Narendra Modi Stadium, Ahmedabad",Grand Final,Bowl First,25,64.1,175,High (Late Evening),2.9
