@@ -60,7 +60,7 @@ def probability_columns(frame: pd.DataFrame) -> tuple[str, str]:
 
 
 st.set_page_config(page_title="IPL 2026 Final XAI Prediction", layout="wide")
-st.title("IPL 2026 Post-Q1 Explainable AI Prediction")
+st.title("IPL 2026 Post-Semi Final Explainable AI Prediction")
 st.caption("RCB confirmed finalist | Featured final candidate: RCB vs SRH | Prediction as of May 27, 2026 | Stacked ML ensemble + SHAP + Monte Carlo")
 
 report_path = REPORTS_DIR / "ipl_2026_final_prediction_report.md"

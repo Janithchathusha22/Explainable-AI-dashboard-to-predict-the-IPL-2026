@@ -1070,7 +1070,7 @@ def write_final_report(
             "",
             "## 9. XAI Method",
             "",
-            f"The stacked ensemble is used for final probability. SHAP is applied to the XGBoost tree model, not directly to the stacked logistic meta-learner, because tree SHAP gives stable feature-level explanations for the base model. The local SHAP rows explain which inputs push the {TEAM_A}-vs-{TEAM_B} candidate final prediction toward either side. The feature matrix includes playoff live-weather inputs, right/left matchup inputs, and the known Q1 result when those CSV rows are available.",
+            f"The stacked ensemble is used for final probability. SHAP is applied to the XGBoost tree model, not directly to the stacked logistic meta-learner, because tree SHAP gives stable feature-level explanations for the base model. The local SHAP rows explain which inputs push the {TEAM_A}-vs-{TEAM_B} candidate final prediction toward either side. The feature matrix includes playoff live-weather inputs, right/left matchup inputs, and the known Semi Final 1 result when those CSV rows are available.",
             "",
             "Generated files:",
             "- reports/shap_global_bar.png",

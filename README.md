@@ -1,45 +1,64 @@
 # IPL 2026 Final Explainable AI Prediction
 
-A Streamlit dashboard and explainable machine-learning pipeline for predicting the IPL 2026 final between Gujarat Titans (GT) and Sunrisers Hyderabad (SRH).
+A Streamlit dashboard and explainable machine-learning pipeline for forecasting the IPL 2026 playoff/final path.
 
 The project combines historical IPL match data, 2025/2026 ball-by-ball data, playoff venue effects, live-weather inputs, right/left matchup features, model ensembling, Monte Carlo simulation, and SHAP explainability.
 
 ## Live Demo
 
-Add the deployed Streamlit URL here after publishing:
-
 ```text
-https://your-app-name.streamlit.app
+https://lnkd.in/gPurrJVM
 ```
 
 ## Current Prediction
 
-Prediction target date: `2026-05-26`
+Prediction target date: `2026-05-27`
 
-Final fixture:
+Known playoff result:
+
+| Match | Teams | Result | Venue |
+| --- | --- | --- | --- |
+| Semi Final 1 | RCB vs GT | RCB won by 92 runs | HPCA Stadium, Dharamshala |
+
+Featured candidate final:
 
 | Match | Teams | Final Date | Venue |
 | --- | --- | --- | --- |
-| Grand Final | GT vs SRH | 2026-05-31 | Narendra Modi Stadium, Ahmedabad |
+| Grand Final | RCB vs SRH | 2026-05-31 | Narendra Modi Stadium, Ahmedabad |
 
 Latest regenerated result:
 
 | Team | Win Probability |
 | --- | ---: |
-| GT | 47.5% |
-| SRH | 52.5% |
+| RCB | 48.1% |
+| SRH | 51.9% |
 
-Predicted winner: **SRH**
+Predicted winner for this candidate final: **SRH**
 
 Confidence level: **LOW**
 
-The low-confidence label is intentional. The stacked ensemble favors SRH, while the tree-based base models lean heavily toward GT, so the dashboard exposes the disagreement instead of hiding it.
+The low-confidence label is intentional. The stacked ensemble slightly favors SRH, while the tree-based base models lean toward RCB, so the dashboard exposes the disagreement instead of hiding it.
+
+Playoff simulation:
+
+| Team | Cup Probability | Final Appearance |
+| --- | ---: | ---: |
+| RCB | 46.9% | 100.0% |
+| RR | 28.6% | 53.0% |
+| SRH | 24.5% | 47.0% |
+
+Most likely final pairs:
+
+| Final Pair | Probability |
+| --- | ---: |
+| RCB vs RR | 53.0% |
+| RCB vs SRH | 47.0% |
 
 ## Dashboard
 
 The Streamlit frontend includes:
 
-- Final winner probability
+- Semi Final result and candidate-final winner probability
 - Player of the Match ranking
 - Playoff bracket and fixture probabilities
 - Sinhala playoff schedule table
@@ -87,6 +106,7 @@ Main input files:
 - `ipl_2025_deliveries.csv`
 - `ipl_2026_deliveries.csv`
 - `ipl_2026_recent_matches.csv`
+- `ipl_2026_q1_rcb_vs_gt.csv`
 - `ipl_2026_team_standings.csv`
 - `ipl_2026_playoff_venues.csv`
 - `ipl_2026_playoffs_toss_and_ground_effects.csv`
@@ -127,8 +147,9 @@ Examples:
 Important leakage control:
 
 - The final is played on `2026-05-31`.
-- The prediction is made as of `2026-05-26`.
-- Training excludes matches on or after `2026-05-26`, so future playoff outcomes are not leaked into the final prediction.
+- The prediction is made as of `2026-05-27`.
+- Training excludes matches on or after `2026-05-27`, so future playoff outcomes are not leaked into the candidate-final prediction.
+- Semi Final 1 is already known and included: RCB 254/5, GT 162.
 
 ## Models Used
 
@@ -153,14 +174,14 @@ Validation:
 Explainability:
 
 - SHAP is applied to the XGBoost base learner
-- Local SHAP explains the GT vs SRH final row
+- Local SHAP explains the RCB vs SRH candidate-final row
 - Global SHAP ranks the strongest historical factors
 
 Uncertainty:
 
 - 10,000 Monte Carlo simulations perturb final-match features
 - Scenario sensitivity tests toss and player-availability changes
-- Four-team playoff bracket simulation uses 30,000 runs
+- Playoff bracket simulation uses 30,000 runs
 
 ## How To Train
 
@@ -229,4 +250,4 @@ GitHub Pages is not suitable for this project because it hosts static sites, whi
 
 ## Responsible Use
 
-This is a data-science and explainability project, not betting advice. Cricket outcomes are uncertain, and the current prediction is explicitly low-confidence because model families disagree.
+This is a data-science and explainability project, not betting advice. Cricket outcomes are uncertain, and the current candidate-final prediction is explicitly low-confidence because model families disagree.
