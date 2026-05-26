@@ -37,6 +37,16 @@ What I used:
 - SHAP for explainability
 - Monte Carlo simulation
 
+Model and algorithm stack:
+
+- Base learners: Random Forest, XGBoost, LightGBM
+- Meta learner: Logistic Regression (stacking on base-model probabilities)
+- Cross-validation: Stratified 10-fold CV
+- Recency weighting: newer season samples are up-weighted during training
+- Final probability rule: `p_final = sigmoid(w1*p_rf + w2*p_xgb + w3*p_lgb + b)`
+- Uncertainty estimation: 10,000-run Monte Carlo simulation
+- Explainability method: SHAP (Tree SHAP on XGBoost for local + global factor attribution)
+
 Feature groups:
 
 - Historical IPL win rates
