@@ -1,14 +1,8 @@
 team1,team2,venue,date,match_type,toss_winner,toss_decision,scenario_weight,team1_stacked_probability,team1_xgb_probability,actual_result
-RCB,GT,"HPCA Stadium, Dharamshala",2026-05-26,Semi Final 1,GT,field,1.0,1.0,1.0,RCB won by 92 runs
-SRH,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-27,Semi Final 2,SRH,field,0.275,0.46878933570448017,0.6448094844818115,
-SRH,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-27,Semi Final 2,SRH,bat,0.225,0.47370912415438327,0.5708481073379517,
-SRH,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-27,Semi Final 2,RR,field,0.275,0.47370912415438327,0.5708481073379517,
-SRH,RR,"Maharaja Yadavindra Singh Stadium, New Chandigarh",2026-05-27,Semi Final 2,RR,bat,0.225,0.46878933570448017,0.6448094844818115,
-RCB,RR,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,field,0.35,0.46013482758135815,0.4017511010169983,
-RCB,RR,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,bat,0.15,0.4628778123376812,0.427720308303833,
-RCB,RR,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RR,field,0.35,0.4628778123376812,0.427720308303833,
-RCB,RR,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RR,bat,0.15,0.46013482758135815,0.4017511010169983,
-RCB,SRH,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,field,0.35,0.48052590574156867,0.7347187399864197,
-RCB,SRH,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,bat,0.15,0.4839421266001599,0.652204155921936,
-RCB,SRH,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,SRH,field,0.35,0.4839421266001599,0.652204155921936,
-RCB,SRH,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,SRH,bat,0.15,0.48052590574156867,0.7347187399864197,
+RCB,GT,"HPCA Stadium, Dharamshala",2026-05-26,Qualifier 1,,,1.0,1.0,1.0,RCB won by 92 runs
+RR,SRH,"Maharaja Yadavindra Singh Stadium, Mullanpur",2026-05-27,Eliminator,,,1.0,1.0,1.0,RR won by 47 runs
+GT,RR,"Maharaja Yadavindra Singh Stadium, Mullanpur",2026-05-29,Qualifier 2,,,1.0,1.0,1.0,GT won by 7 wickets
+RCB,GT,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,field,0.35,0.4622932838248692,0.3750069737434387,
+RCB,GT,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,RCB,bat,0.15,0.4527227262127428,0.46444815397262573,
+RCB,GT,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,GT,field,0.35,0.4527227262127428,0.46444815397262573,
+RCB,GT,"Narendra Modi Stadium, Ahmedabad",2026-05-31,Final,GT,bat,0.15,0.4622932838248692,0.3750069737434387,

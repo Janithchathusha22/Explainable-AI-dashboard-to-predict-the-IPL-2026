@@ -12,61 +12,61 @@ https://lnkd.in/gPurrJVM
 
 ## Current Prediction
 
-Prediction target date: `2026-05-27`
+Prediction target date: `2026-05-30`
 
-Known playoff result:
+Known playoff results:
 
 | Match | Teams | Result | Venue |
 | --- | --- | --- | --- |
-| Semi Final 1 | RCB vs GT | RCB won by 92 runs | HPCA Stadium, Dharamshala |
+| Qualifier 1 | RCB vs GT | RCB won by 92 runs | HPCA Stadium, Dharamshala |
+| Eliminator | RR vs SRH | RR won by 47 runs | Maharaja Yadavindra Singh Stadium, Mullanpur |
+| Qualifier 2 | GT vs RR | GT won by 7 wickets | Maharaja Yadavindra Singh Stadium, Mullanpur |
 
-Featured candidate final:
+Confirmed final:
 
 | Match | Teams | Final Date | Venue |
 | --- | --- | --- | --- |
-| Grand Final | RCB vs SRH | 2026-05-31 | Narendra Modi Stadium, Ahmedabad |
+| Grand Final | RCB vs GT | 2026-05-31 | Narendra Modi Stadium, Ahmedabad |
 
 Latest regenerated result:
 
 | Team | Win Probability |
 | --- | ---: |
-| RCB | 48.1% |
-| SRH | 51.9% |
+| RCB | 46.2% |
+| GT | 53.8% |
 
-Predicted winner for this candidate final: **SRH**
+Predicted winner for this final: **GT**
 
 Confidence level: **LOW**
 
-The low-confidence label is intentional. The stacked ensemble slightly favors SRH, while the tree-based base models lean toward RCB, so the dashboard exposes the disagreement instead of hiding it.
+The low-confidence label is intentional. The stacked ensemble favors GT, but the edge is narrow and the cross-validation signal is modest, so the dashboard exposes uncertainty instead of presenting the forecast as a lock.
 
-Playoff simulation:
+Confirmed path and cup probability:
 
 | Team | Cup Probability | Final Appearance |
 | --- | ---: | ---: |
-| RCB | 46.9% | 100.0% |
-| RR | 28.6% | 53.0% |
-| SRH | 24.5% | 47.0% |
+| GT | 54.2% | 100.0% |
+| RCB | 45.8% | 100.0% |
+| RR | 0.0% | 0.0% |
+| SRH | 0.0% | 0.0% |
 
 Most likely final pairs:
 
 | Final Pair | Probability |
 | --- | ---: |
-| RCB vs RR | 53.0% |
-| RCB vs SRH | 47.0% |
+| RCB vs GT | 100.0% |
 
 ## Dashboard
 
 The Streamlit frontend includes:
 
-- Semi Final result and candidate-final winner probability
+- Confirmed final winner prediction
+- Key evidence only: top SHAP factors, POTM ranking, playoff path, and compact model detail
 - Player of the Match ranking
-- Playoff bracket and fixture probabilities
-- Sinhala playoff schedule table
+- Playoff path and fixture probabilities
 - SHAP local and global explanations
 - Monte Carlo uncertainty distribution
 - Scenario sensitivity
-- Player performance forecast
-- Weather and right/left matchup input tables
 
 Run locally:
 
@@ -147,9 +147,9 @@ Examples:
 Important leakage control:
 
 - The final is played on `2026-05-31`.
-- The prediction is made as of `2026-05-27`.
-- Training excludes matches on or after `2026-05-27`, so future playoff outcomes are not leaked into the candidate-final prediction.
-- Semi Final 1 is already known and included: RCB 254/5, GT 162.
+- The prediction is made as of `2026-05-30`.
+- Training excludes matches on or after `2026-05-30`, so the final outcome is not leaked into the prediction.
+- Known playoff results through Qualifier 2 are included, including RCB 254/5 vs GT 162 in Qualifier 1.
 
 ## Models Used
 
@@ -174,7 +174,7 @@ Validation:
 Explainability:
 
 - SHAP is applied to the XGBoost base learner
-- Local SHAP explains the RCB vs SRH candidate-final row
+- Local SHAP explains the confirmed RCB vs GT final row
 - Global SHAP ranks the strongest historical factors
 
 Uncertainty:
@@ -250,4 +250,4 @@ GitHub Pages is not suitable for this project because it hosts static sites, whi
 
 ## Responsible Use
 
-This is a data-science and explainability project, not betting advice. Cricket outcomes are uncertain, and the current candidate-final prediction is explicitly low-confidence because model families disagree.
+This is a data-science and explainability project, not betting advice. Cricket outcomes are uncertain, and the current RCB vs GT final prediction is explicitly low-confidence because the statistical edge is narrow.

@@ -28,11 +28,12 @@ TEAM_MAPPING = {
     'Pune Warriors': 'PWI'
 }
 
-PREDICTION_TARGET_DATE = pd.Timestamp("2026-05-27")
+PREDICTION_TARGET_DATE = pd.Timestamp("2026-05-30")
 FINAL_MATCH_DATE = pd.Timestamp("2026-05-31")
 WEATHER_FILE = "ipl_playoffs_live_weather.csv"
 RIGHT_LEFT_FILE = "right_left.csv"
 Q1_SCORECARD_FILE = "ipl_2026_q1_rcb_vs_gt.csv"
+PLAYOFF_RESULTS_FILE = "ipl_playoffs_2026.csv"
 
 
 def normalize_team_name(value):
@@ -319,6 +320,61 @@ def load_q1_actual_match():
     return match
 
 
+def infer_toss_from_margin(winner, margin):
+    text = str(margin).lower()
+    if "wicket" in text:
+        return winner, "field"
+    if "run" in text:
+        return winner, "bat"
+    return winner, "field"
+
+
+def load_known_playoff_results():
+    if not os.path.exists(PLAYOFF_RESULTS_FILE):
+        return []
+
+    df = pd.read_csv(PLAYOFF_RESULTS_FILE)
+    required = {"Date", "Match_Type", "Team_1", "Team_2", "Venue", "Winner", "Margin"}
+    if df.empty or not required.issubset(df.columns):
+        return []
+
+    matches = []
+    for idx, row in df.iterrows():
+        if row[["Team_1", "Team_2", "Winner", "Venue", "Match_Type"]].isna().any():
+            continue
+        team1 = normalize_team_name(row["Team_1"])
+        team2 = normalize_team_name(row["Team_2"])
+        winner = normalize_team_name(row["Winner"])
+        venue = str(row["Venue"]).strip()
+        match_type = str(row["Match_Type"]).strip()
+        if not team1 or not team2 or not winner or team1 == "None" or team2 == "None" or winner == "None":
+            continue
+        if venue.lower() == "none" or "rest" in match_type.lower():
+            continue
+
+        toss_winner, toss_decision = infer_toss_from_margin(winner, row["Margin"])
+        date = pd.to_datetime(row["Date"])
+        matches.append(
+            {
+                "match_id": 202700 + idx,
+                "date": date,
+                "season": "2026",
+                "city": venue.split(",")[-1].strip() if "," in venue else venue,
+                "venue": venue,
+                "team1": team1,
+                "team2": team2,
+                "toss_winner": toss_winner,
+                "toss_decision": toss_decision,
+                "winner": winner,
+                "player_of_match": "Unknown",
+                "match_type": match_type,
+                "overs": 20,
+                "balls_per_over": 6,
+            }
+        )
+    return matches
+
+
 def load_all_matches():
     df_hist = load_clean_historical_matches()
     df_del_reconstructed = reconstruct_2026_matches_from_deliveries()
@@ -326,26 +382,11 @@ def load_all_matches():
     
     q1_actual = load_q1_actual_match()
 
-    # Playoff Matches. Semi Final 1 is an actual result; the remaining rows are
-    # future fixtures used only for candidate final feature generation.
+    # Known playoff matches are actual results. The final row is the one future
+    # fixture used for prediction feature generation.
     playoffs = [
         q1_actual,
-        {
-            'match_id': 202692,
-            'date': pd.to_datetime('2026-05-27'),
-            'season': '2026',
-            'city': 'New Chandigarh',
-            'venue': 'Maharaja Yadavindra Singh Stadium, New Chandigarh',
-            'team1': 'SRH',
-            'team2': 'RR',
-            'toss_winner': 'SRH',
-            'toss_decision': 'bat',
-            'winner': 'SRH',
-            'player_of_match': 'Ishan Kishan',
-            'match_type': 'Semi Final',
-            'overs': 20,
-            'balls_per_over': 6
-        },
+        *load_known_playoff_results(),
         # Grand Final
         {
             'match_id': 202694,
@@ -355,7 +396,7 @@ def load_all_matches():
             'city': 'Ahmedabad',
             'venue': 'Narendra Modi Stadium, Ahmedabad',
             'team1': 'RCB',
-            'team2': 'SRH',
+            'team2': 'GT',
             'toss_winner': 'RCB',
             'toss_decision': 'field',
             'winner': 'RCB', # target label (dummy for feature creation)
@@ -532,9 +573,8 @@ def calculate_match_features(df_all):
         t1_exp = exp_map.get(team1, 5)
         t2_exp = exp_map.get(team2, 5)
         
-        # path reached after Semi Final 1: RCB is direct finalist; everyone else
-        # must win at least one more playoff.
-        path_map = {'RCB': 1.0, 'GT': 0.5, 'SRH': 0.5, 'RR': 0.5}
+        # path reached after Qualifier 2: RCB and GT are confirmed finalists.
+        path_map = {'RCB': 1.0, 'GT': 1.0, 'SRH': 0.0, 'RR': 0.0}
         t1_path = path_map.get(team1, 0.5)
         t2_path = path_map.get(team2, 0.5)
         

@@ -33,12 +33,12 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 RANDOM_STATE = 42
-PREDICTION_TARGET_DATE = pd.Timestamp("2026-05-27")
+PREDICTION_TARGET_DATE = pd.Timestamp("2026-05-30")
 FINAL_MATCH_DATE = pd.Timestamp("2026-05-31")
 FINAL_DATE = FINAL_MATCH_DATE
 CV_FOLDS = 10
 TEAM_A = "RCB"
-TEAM_B = "SRH"
+TEAM_B = "GT"
 MODELS_DIR = Path("models")
 REPORTS_DIR = Path("reports")
 
@@ -545,8 +545,8 @@ def playoff_base_matches() -> pd.DataFrame:
 
     base = load_all_matches()
     base["date"] = pd.to_datetime(base["date"])
-    # Keep actual results known at the prediction date, including Semi Final 1.
-    # Future playoff rows are excluded so remaining matches are still simulated.
+    # Keep actual results known at the prediction date, including Qualifier 2.
+    # The final remains the only future playoff fixture.
     return base[base["date"] < PREDICTION_TARGET_DATE].copy()
 
 
@@ -658,118 +658,140 @@ def predict_fixture_probability(
 
 
 def build_playoff_cup_probabilities(data: dict, bundle: dict, n_simulations: int = 30000) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    rng = np.random.default_rng(RANDOM_STATE)
     base = playoff_base_matches()
-    teams = ["RCB", "SRH", "RR"]
+    teams = ["RCB", "GT", "RR", "SRH"]
     venues = {
-        "semi_1": "HPCA Stadium, Dharamshala",
-        "semi_2": "Maharaja Yadavindra Singh Stadium, New Chandigarh",
+        "qualifier_1": "HPCA Stadium, Dharamshala",
+        "eliminator": "Maharaja Yadavindra Singh Stadium, Mullanpur",
+        "qualifier_2": "Maharaja Yadavindra Singh Stadium, Mullanpur",
         "final": "Narendra Modi Stadium, Ahmedabad",
     }
 
-    fixture_cache: dict[tuple[str, str, str], dict] = {}
+    actual_fixtures = [
+        {
+            "team1": "RCB",
+            "team2": "GT",
+            "venue": venues["qualifier_1"],
+            "date": "2026-05-26",
+            "match_type": "Qualifier 1",
+            "team1_win_probability": 1.0,
+            "team2_win_probability": 0.0,
+            "actual_result": "RCB won by 92 runs",
+        },
+        {
+            "team1": "RR",
+            "team2": "SRH",
+            "venue": venues["eliminator"],
+            "date": "2026-05-27",
+            "match_type": "Eliminator",
+            "team1_win_probability": 1.0,
+            "team2_win_probability": 0.0,
+            "actual_result": "RR won by 47 runs",
+        },
+        {
+            "team1": "GT",
+            "team2": "RR",
+            "venue": venues["qualifier_2"],
+            "date": "2026-05-29",
+            "match_type": "Qualifier 2",
+            "team1_win_probability": 1.0,
+            "team2_win_probability": 0.0,
+            "actual_result": "GT won by 7 wickets",
+        },
+    ]
 
-    def fixture(stage: str, team1: str, team2: str) -> dict:
-        key = (stage, team1, team2)
-        if key not in fixture_cache:
-            date_map = {"semi_1": "2026-05-26", "semi_2": "2026-05-27", "final": "2026-05-31"}
-            type_map = {"semi_1": "Semi Final 1", "semi_2": "Semi Final 2", "final": "Final"}
-            fixture_cache[key] = predict_fixture_probability(
-                base,
-                data,
-                bundle,
-                team1,
-                team2,
-                venues[stage],
-                date_map[stage],
-                type_map[stage],
-            )
-        return fixture_cache[key]
+    final = predict_fixture_probability(
+        base,
+        data,
+        bundle,
+        "RCB",
+        "GT",
+        venues["final"],
+        "2026-05-31",
+        "Final",
+    )
 
-    semi_1 = {
-        "team1": "RCB",
-        "team2": "GT",
-        "venue": venues["semi_1"],
-        "date": "2026-05-26",
-        "match_type": "Semi Final 1",
-        "team1_win_probability": 1.0,
-        "team2_win_probability": 0.0,
-        "scenarios": [
-            {
-                "team1": "RCB",
-                "team2": "GT",
-                "venue": venues["semi_1"],
-                "date": "2026-05-26",
-                "match_type": "Semi Final 1",
-                "toss_winner": "GT",
-                "toss_decision": "field",
-                "scenario_weight": 1.0,
-                "team1_stacked_probability": 1.0,
-                "team1_xgb_probability": 1.0,
-                "actual_result": "RCB won by 92 runs",
-            }
-        ],
-    }
-    fixture_cache[("semi_1", "RCB", "GT")] = semi_1
-    semi_2 = fixture("semi_2", "SRH", "RR")
-
-    champion_counts = {team: 0 for team in teams}
-    final_counts = {team: 0 for team in teams}
-    final_pair_counts: dict[str, int] = {}
-
-    for _ in range(n_simulations):
-        finalist_1 = "RCB"
-        finalist_2 = "SRH" if rng.random() < semi_2["team1_win_probability"] else "RR"
-        final_counts[finalist_1] += 1
-        final_counts[finalist_2] += 1
-        pair_name = f"{finalist_1} vs {finalist_2}"
-        final_pair_counts[pair_name] = final_pair_counts.get(pair_name, 0) + 1
-
-        final = fixture("final", finalist_1, finalist_2)
-        champion = finalist_1 if rng.random() < final["team1_win_probability"] else finalist_2
-        champion_counts[champion] += 1
-
-    team_rows = []
-    for team in teams:
-        team_rows.append(
-            {
-                "team": team,
-                "cup_probability": champion_counts[team] / n_simulations,
-                "final_appearance_probability": final_counts[team] / n_simulations,
-                "semi_1_win_probability": 1.0 if team == "RCB" else np.nan,
-                "semi_2_win_probability": semi_2["team1_win_probability"] if team == "SRH" else (semi_2["team2_win_probability"] if team == "RR" else np.nan),
-            }
-        )
+    rcb_final_probability = final["team1_win_probability"]
+    gt_final_probability = final["team2_win_probability"]
+    team_rows = [
+        {
+            "team": "RCB",
+            "cup_probability": rcb_final_probability,
+            "final_appearance_probability": 1.0,
+            "qualifier_1_win_probability": 1.0,
+            "qualifier_2_win_probability": np.nan,
+        },
+        {
+            "team": "GT",
+            "cup_probability": gt_final_probability,
+            "final_appearance_probability": 1.0,
+            "qualifier_1_win_probability": 0.0,
+            "qualifier_2_win_probability": 1.0,
+        },
+        {
+            "team": "RR",
+            "cup_probability": 0.0,
+            "final_appearance_probability": 0.0,
+            "qualifier_1_win_probability": np.nan,
+            "qualifier_2_win_probability": 0.0,
+        },
+        {
+            "team": "SRH",
+            "cup_probability": 0.0,
+            "final_appearance_probability": 0.0,
+            "qualifier_1_win_probability": np.nan,
+            "qualifier_2_win_probability": np.nan,
+        },
+    ]
     team_summary = pd.DataFrame(team_rows).sort_values("cup_probability", ascending=False)
     team_summary.to_csv(REPORTS_DIR / "playoff_cup_probabilities.csv", index=False)
 
-    pair_summary = (
-        pd.DataFrame(
-            [{"final_pair": pair, "probability": count / n_simulations} for pair, count in final_pair_counts.items()]
-        )
-        .sort_values("probability", ascending=False)
-        .reset_index(drop=True)
-    )
+    pair_summary = pd.DataFrame([{"final_pair": "RCB vs GT", "probability": 1.0}])
     pair_summary.to_csv(REPORTS_DIR / "final_pair_probabilities.csv", index=False)
 
-    fixture_rows = []
-    for cached in fixture_cache.values():
-        fixture_rows.append(
-            {
-                "match_type": cached["match_type"],
-                "team1": cached["team1"],
-                "team2": cached["team2"],
-                "venue": cached["venue"],
-                "team1_win_probability": cached["team1_win_probability"],
-                "team2_win_probability": cached["team2_win_probability"],
-            }
-        )
-    fixture_probs = pd.DataFrame(fixture_rows).sort_values(["match_type", "team1", "team2"])
+    fixture_rows = [
+        {
+            "match_type": item["match_type"],
+            "team1": item["team1"],
+            "team2": item["team2"],
+            "venue": item["venue"],
+            "team1_win_probability": item["team1_win_probability"],
+            "team2_win_probability": item["team2_win_probability"],
+            "actual_result": item["actual_result"],
+        }
+        for item in actual_fixtures
+    ]
+    fixture_rows.append(
+        {
+            "match_type": final["match_type"],
+            "team1": final["team1"],
+            "team2": final["team2"],
+            "venue": final["venue"],
+            "team1_win_probability": final["team1_win_probability"],
+            "team2_win_probability": final["team2_win_probability"],
+            "actual_result": "",
+        }
+    )
+    fixture_probs = pd.DataFrame(fixture_rows)
     fixture_probs.to_csv(REPORTS_DIR / "playoff_fixture_probabilities.csv", index=False)
 
-    scenario_rows = []
-    for cached in fixture_cache.values():
-        scenario_rows.extend(cached["scenarios"])
+    scenario_rows = [
+        {
+            "team1": item["team1"],
+            "team2": item["team2"],
+            "venue": item["venue"],
+            "date": item["date"],
+            "match_type": item["match_type"],
+            "toss_winner": "",
+            "toss_decision": "",
+            "scenario_weight": 1.0,
+            "team1_stacked_probability": item["team1_win_probability"],
+            "team1_xgb_probability": item["team1_win_probability"],
+            "actual_result": item["actual_result"],
+        }
+        for item in actual_fixtures
+    ]
+    scenario_rows.extend(final["scenarios"])
     pd.DataFrame(scenario_rows).to_csv(REPORTS_DIR / "playoff_toss_scenario_probabilities.csv", index=False)
 
     return team_summary, pair_summary, fixture_probs
@@ -945,11 +967,11 @@ def write_final_report(
     lines = [
         "# IPL 2026 Final Explainable AI Prediction Report",
         "",
-        f"Featured final candidate: {TEAM_A} vs {TEAM_B}",
+        f"Confirmed final matchup: {TEAM_A} vs {TEAM_B}",
         f"Venue: {final_row['venue']}",
         f"Final match date: {pd.to_datetime(final_row['date']).date()}",
         f"Prediction target date: {PREDICTION_TARGET_DATE.date()}",
-        "Known playoff update: RCB beat GT by 92 runs in Semi Final 1 (RCB 254/5, GT 162), so RCB is locked as the first finalist.",
+        "Known playoff update: RCB beat GT by 92 runs in Qualifier 1, RR beat SRH in the Eliminator, and GT beat RR in Qualifier 2. RCB and GT are locked as the finalists.",
         "",
         "## 1. Predicted Winner",
         "",
@@ -962,7 +984,7 @@ def write_final_report(
         f"Model disagreement across base learners: **{model_disagreement * 100:.1f} percentage points**",
         f"Mean cross-validation AUC across base learners: **{mean_auc:.3f}**",
         "",
-        "## 2. Four-Team Playoff Cup Probabilities",
+            "## 2. Confirmed Playoff Path And Cup Probabilities",
         "",
     ]
 
@@ -979,7 +1001,7 @@ def write_final_report(
     lines.extend(
         [
             "",
-            "Note: these odds lock the known Semi Final 1 result, then simulate Semi Final 2 and the Final. The featured final section is one candidate final row until the other finalist is confirmed.",
+            "Note: these odds lock all known playoff results through Qualifier 2. The only remaining modeled match is the RCB vs GT final.",
             "",
             "## 3. Model Confidence",
         "",
@@ -1070,7 +1092,7 @@ def write_final_report(
             "",
             "## 9. XAI Method",
             "",
-            f"The stacked ensemble is used for final probability. SHAP is applied to the XGBoost tree model, not directly to the stacked logistic meta-learner, because tree SHAP gives stable feature-level explanations for the base model. The local SHAP rows explain which inputs push the {TEAM_A}-vs-{TEAM_B} candidate final prediction toward either side. The feature matrix includes playoff live-weather inputs, right/left matchup inputs, and the known Semi Final 1 result when those CSV rows are available.",
+            f"The stacked ensemble is used for final probability. SHAP is applied to the XGBoost tree model, not directly to the stacked logistic meta-learner, because tree SHAP gives stable feature-level explanations for the base model. The local SHAP rows explain which inputs push the confirmed {TEAM_A}-vs-{TEAM_B} final prediction toward either side. The feature matrix includes playoff live-weather inputs, right/left matchup inputs, and known playoff results through Qualifier 2 when those CSV rows are available.",
             "",
             "Generated files:",
             "- reports/shap_global_bar.png",
@@ -1121,7 +1143,7 @@ def main() -> None:
     players = build_player_of_match_ranking(bundle["stacked_prob"])
     scenarios = build_scenarios(data, bundle, players.iloc[0])
 
-    print("Simulating four-team playoff cup probabilities...")
+    print("Building confirmed playoff path probabilities...")
     cup_probs, final_pairs, fixture_probs = build_playoff_cup_probabilities(data, bundle)
     print(cup_probs.to_string(index=False))
 

@@ -15,10 +15,10 @@ import joblib
 # Standardize output encoding
 sys.stdout.reconfigure(encoding='utf-8')
 
-PREDICTION_TARGET_DATE = pd.Timestamp("2026-05-27")
+PREDICTION_TARGET_DATE = pd.Timestamp("2026-05-30")
 FINAL_MATCH_DATE = pd.Timestamp("2026-05-31")
 TEAM_A = "RCB"
-TEAM_B = "SRH"
+TEAM_B = "GT"
 CV_FOLDS = 10
 
 def prepare_data(features_file):

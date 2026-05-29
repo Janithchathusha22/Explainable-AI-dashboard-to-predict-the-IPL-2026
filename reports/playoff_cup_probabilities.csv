@@ -1,4 +1,5 @@
-team,cup_probability,final_appearance_probability,semi_1_win_probability,semi_2_win_probability
-RCB,0.469,1.0,1.0,
-RR,0.28613333333333335,0.5303,,0.5287507700705683
-SRH,0.24486666666666668,0.4697,,0.4712492299294317
+team,cup_probability,final_appearance_probability,qualifier_1_win_probability,qualifier_2_win_probability
+GT,0.542491994981194,1.0,0.0,1.0
+RCB,0.45750800501880595,1.0,1.0,
+RR,0.0,0.0,,0.0
+SRH,0.0,0.0,,
